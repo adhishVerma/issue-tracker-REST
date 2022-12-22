@@ -1,8 +1,13 @@
 const express = require("express");
-const dotenv = require("dotenv");
-const app = express();
+require("dotenv").config();
 const bugRoutes = require("./routes/bugRoutes");
 const { errorHandler } = require("./middleware/errorMiddleware");
+const connectDB = require('./config/db')
+
+connectDB()
+
+const app = express();
+
 
 app.use(express.json());
 app.use("/api/bugs", bugRoutes);

@@ -1,10 +1,12 @@
 const asyncHandler = require("express-async-handler");
+const issue = require("../models/issueModel");
 
 // @desc get all open issues
 // @route GET /api/bugs
 // @access private
 const getBugs = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "Get bugs" });
+  const issues = await issue.find();
+  res.status(200).json(issues);
 });
 
 // @desc open new issues
@@ -13,7 +15,14 @@ const getBugs = asyncHandler(async (req, res) => {
 const openBug = asyncHandler(async (req, res) => {
   if (Object.keys(req.body).length > 0) {
     // register new bug
-    return res.status(200).json({ success: true, message: "created bug" });
+    const new_issue = await issue.create({
+      name: req.body.name,
+      team: req.body.team,
+      project: req.body.project,
+      status: req.body.status,
+      desc: req.body.desc,
+    });
+    return res.status(200).json(new_issue);
   }
   res.status(400);
   throw new Error("empty request body");
@@ -23,14 +32,30 @@ const openBug = asyncHandler(async (req, res) => {
 // @route PUT /api/bugs/:id
 // @access private
 const updateBug = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: `Update bug ${req.params.id}` });
+  const bug = await issue.findById(req.params.id);
+  if (!bug) {
+    res.status(400);
+    throw new Error("issue not found");
+  }
+  const updatedBug = await issue.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res
+    .status(200)
+    .json({ message: `Update bug ${req.params.id}`, issue: updatedBug });
 });
 
 // @desc close issues
 // @route POST /api/bugs/:id
 // @access private
-const closeBug = asyncHandler(async (req, res) => {
+const deleteBug = asyncHandler(async (req, res) => {
+  const bug = await issue.findById(req.params.id);
+  if (!bug) {
+    res.status(400);
+    throw new Error("issue not found");
+  }
+  await bug.remove();
   res.status(200).json({ message: `Delete bug ${req.params.id}` });
 });
 
-module.exports = { getBugs, openBug, updateBug, closeBug };
+module.exports = { getBugs, openBug, updateBug, deleteBug };

@@ -4,10 +4,10 @@ const {
   getBugs,
   openBug,
   updateBug,
-  closeBug,
+  deleteBug,
 } = require("../controllers/bugController");
 
 router.route("/").get(getBugs).post(openBug);
-router.route("/:id").put(updateBug).delete(closeBug);
+router.route("/:id").put(updateBug).delete(deleteBug);
 
 module.exports = router;
