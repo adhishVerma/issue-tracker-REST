@@ -5,7 +5,7 @@ const {
   openBug,
   updateBug,
   deleteBug,
-} = require("../controllers/bugController");
+} = require("../controllers/issueController");
 
 router.route("/").get(getBugs).post(openBug);
 router.route("/:id").put(updateBug).delete(deleteBug);

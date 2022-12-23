@@ -1,11 +1,11 @@
 const asyncHandler = require("express-async-handler");
-const issue = require("../models/issueModel");
+const Issue = require("../models/issueModel");
 
 // @desc get all open issues
 // @route GET /api/bugs
 // @access private
 const getBugs = asyncHandler(async (req, res) => {
-  const issues = await issue.find();
+  const issues = await Issue.find();
   res.status(200).json(issues);
 });
 
@@ -15,7 +15,7 @@ const getBugs = asyncHandler(async (req, res) => {
 const openBug = asyncHandler(async (req, res) => {
   if (Object.keys(req.body).length > 0) {
     // register new bug
-    const new_issue = await issue.create({
+    const new_issue = await Issue.create({
       name: req.body.name,
       team: req.body.team,
       project: req.body.project,
@@ -32,12 +32,12 @@ const openBug = asyncHandler(async (req, res) => {
 // @route PUT /api/bugs/:id
 // @access private
 const updateBug = asyncHandler(async (req, res) => {
-  const bug = await issue.findById(req.params.id);
+  const bug = await Issue.findById(req.params.id);
   if (!bug) {
     res.status(400);
     throw new Error("issue not found");
   }
-  const updatedBug = await issue.findByIdAndUpdate(req.params.id, req.body, {
+  const updatedBug = await Issue.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
   res
@@ -49,7 +49,7 @@ const updateBug = asyncHandler(async (req, res) => {
 // @route POST /api/bugs/:id
 // @access private
 const deleteBug = asyncHandler(async (req, res) => {
-  const bug = await issue.findById(req.params.id);
+  const bug = await Issue.findById(req.params.id);
   if (!bug) {
     res.status(400);
     throw new Error("issue not found");

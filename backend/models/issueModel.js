@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const issueSchema = mongoose.Schema(
   {
+    user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
     name: { type: String, required: true },
     desc: { type: String, required: true },
     project: { type: String, required: true },
@@ -13,4 +14,4 @@ const issueSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("issue", issueSchema);
+module.exports = mongoose.model("Issue", issueSchema);
