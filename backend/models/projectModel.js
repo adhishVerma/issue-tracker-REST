@@ -10,21 +10,20 @@ const projectSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    open_issues: {
-      type: Array,
-    },
-    closed_issues: {
+    issues: {
       type: Array,
     },
     status: {
       type: String,
       required : true
     },
-    teamId : {
-      type : mongoose.Schema.Types.ObjectId,
-      required : true,
-      ref : "Team"
-    }
+    team : [{
+      type : {
+        userId : {type : mongoose.SchemaTypes.ObjectId, ref : 'User', required : true},
+        name : {type : String, required : true}
+      },
+      required : true
+    }]
   },
   {
     timestamps: true,

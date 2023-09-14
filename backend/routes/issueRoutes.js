@@ -5,9 +5,11 @@ const {
   openBug,
   updateBug,
   deleteBug,
+  getBug
 } = require("../controllers/issueController");
 
-router.route("/").get(getBugs).post(openBug);
-router.route("/:id").put(updateBug).delete(deleteBug);
+router.route("/").post(openBug);
+router.route('/project/:id').get(getBugs)
+router.route("/:id").put(updateBug).delete(deleteBug).get(getBug)
 
 module.exports = router;
