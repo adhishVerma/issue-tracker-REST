@@ -1,22 +1,32 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const Project = require("../models/projectModel");
+const User = require('../models/userModel');
 
 // @desc Create a project
 // @route POST /api/projects
 // @access  Private
 const createProject = asyncHandler(async (req, res) => {
+  const { userId } = req.body;
   // create project
-  const project = await Project.create({
-    name: req.body.name,
-    desc: req.body.desc,
-    status: "open",
-    teamId: req.body.team,
-  });
+  // const find user by id
+  const user = await User.findById(userId).lean();
+  let project = null;
+
+  if (user) {
+    project = await Project.create({
+      name: req.body.name,
+      desc: req.body.description,
+      status: "open",
+      team: [{userId : user._id, name : user.name}]
+    });
+  }
+
   if (project) {
     return res.status(200).json({
       name: project.name,
       desc: project.desc,
+      success: true
     });
   }
 });
@@ -53,7 +63,7 @@ const updateProject = asyncHandler(async (req, res) => {
 // @route DELETE /api/projects/:id
 // @access  Private
 const deleteProject = asyncHandler(async (req, res) => {
-  // delete project in case of wrong entry
+  // delete project 
   const project = await Project.findById(req.params.id);
   if (!project) {
     res.status(400);
@@ -63,4 +73,27 @@ const deleteProject = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Project removed" });
 });
 
-module.exports = { createProject, getProject, updateProject, deleteProject };
+// @desc Get all projects
+// @route GET /api/projects
+// @access Private
+const getProjects = asyncHandler(async (req, res) => {
+  // getting projects for the user
+  const userId = req.user._id
+  const filter = { 'team':  
+  {$elemMatch : 
+    {'userId' : userId}
+  } 
+}
+  const projects = await Project.find(filter).lean();
+  const addCreator = async (item) => {
+    const creatorId = item.team[0].userId
+    const creatorName = await User.findById(creatorId).lean()
+    item['creator'] = creatorName.name
+  }
+  for (const project of projects){
+    await addCreator(project);
+  }
+  res.status(200).json(projects);
+})
+
+module.exports = { createProject, getProject, updateProject, deleteProject, getProjects };
