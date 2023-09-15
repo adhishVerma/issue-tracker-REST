@@ -4,6 +4,7 @@ const issueRoutes = require("./routes/issueRoutes");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const teamRoutes = require("./routes/teamRoutes");
+const job = require('./config/cron');
 const { errorHandler } = require("./middleware/errorMiddleware");
 const connectDB = require('./config/db')
 const cors = require('cors');
@@ -28,3 +29,6 @@ app.use(errorHandler);
 app.listen(process.env.PORT || 5000, () => {
   console.log(`server started on port ${process.env.PORT}`);
 });
+
+// startign the cron job
+job.start();
