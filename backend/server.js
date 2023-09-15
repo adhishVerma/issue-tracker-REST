@@ -9,6 +9,9 @@ const { errorHandler } = require("./middleware/errorMiddleware");
 const connectDB = require('./config/db')
 const cors = require('cors');
 
+// startign the cron job
+job.start();
+
 connectDB()
 
 const app = express();
@@ -30,5 +33,3 @@ app.listen(process.env.PORT || 5000, () => {
   console.log(`server started on port ${process.env.PORT}`);
 });
 
-// startign the cron job
-job.start();
